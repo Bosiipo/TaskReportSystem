@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    container_name: app
+    tty: true
+    working_dir: /var/www
+    depends_on:
+      - db
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=task_report_system
+      - DB_USERNAME=root
+      - DB_PASSWORD=superuser
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+  db:
+    image: mysql:8
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: task_report_system
+      MYSQL_ROOT_PASSWORD: superuser
+    volumes:
+      - database:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  database:
+    driver: local

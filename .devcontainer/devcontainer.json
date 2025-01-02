@@ -1,0 +1,12 @@
+{
+	"name": "Laravel Development Container",
+	"dockerComposeFile": [
+	  "c:/Users/USER/Desktop/task-report-system/.devcontainer/docker-compose.yml"
+	],
+	"service": "app",
+	"workspaceFolder": "/var/www",
+	"settings": {
+	  "terminal.integrated.shell.linux": "/bin/bash"
+	}
+  }
+  
