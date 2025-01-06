@@ -1,8 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-// import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../Pages/Auth/axiosConfig';
 
 export default function Dashboard({ auth }) {
@@ -12,7 +10,6 @@ export default function Dashboard({ auth }) {
     console.log({ auth });
 
     const [roleName, setRoleName] = useState('');
-    const navigate = useNavigate();
 
     useEffect(() => {
         const getRole = () => {
@@ -42,30 +39,34 @@ export default function Dashboard({ auth }) {
     }, [user]);
 
     const handleClick = () => {
-        console.log('Button Clicked!');
         axiosInstance
             .get('/assign-roles')
             .then((response) => {
+                console.log('ASSIGN_ROLES');
                 console.log('response ==>', response.data);
                 console.log('role assigned', response.data);
             })
             .catch((error) => {
-                console.error('Error:', error);
+                if (error.response && error.response.status === 403) {
+                    alert(
+                        'You do not have permission to access this resource.',
+                    );
+                } else {
+                    console.error('An error occurred:', error);
+                }
             });
-        navigate('/assign-roles');
     };
 
     const handleClickOnTaskCreation = () => {
-        // axiosInstance
-        //     .get('/task-form')
-        //     .then((response) => {
-        //         console.log('response ==>', response.data);
-        //         console.log('role assigned', response.data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
-        navigate('/task-form');
+        axiosInstance
+            .get('/task-form')
+            .then((response) => {
+                // console.log('response ==>', response.data);
+                console.log('task-form page', response.data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     };
 
     return (
@@ -76,19 +77,19 @@ export default function Dashboard({ auth }) {
                         Dashboard
                     </h2>
                     {/* {roleName === 'Admin' ? ( */}
-                        <button
-                            className="rounded bg-green-800 p-1 px-3"
-                            onClick={handleClick}
-                        >
-                            Assign Roles
-                        </button>
+                    <Link
+                        className="rounded bg-green-800 p-1 px-3"
+                        href="/assign-roles"
+                    >
+                        Assign Roles
+                    </Link>
                     {/* ) : ( */}
-                        <button
-                            className="rounded bg-green-800 p-1 px-3"
-                            onClick={handleClickOnTaskCreation}
-                        >
-                            Record Task Report
-                        </button>
+                    <Link
+                        className="rounded bg-green-800 p-1 px-3"
+                        href="/task-form"
+                    >
+                        Record Task Report
+                    </Link>
                     {/* )} */}
                 </div>
             }

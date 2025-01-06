@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -22,12 +23,14 @@ Route::get('/dashboard', function () {
         ]]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/assign-roles', function () {
-    return Inertia::render('RoleDashboard',[
-        'auth' => [
-            'user' => Auth::user(),
-        ]]);
-})->middleware(['role'])->name('RoleDashboard');
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+    Route::get('/assign-roles', function () {
+        return Inertia::render('RoleDashboard', [
+            'auth' => [
+                'user' => Auth::user(),
+            ]]);
+    });
+});
 
 Route::get('/task-form', function () {
     return Inertia::render('TaskForm',[
@@ -35,6 +38,13 @@ Route::get('/task-form', function () {
             'user' => Auth::user(),
         ]]);
 })->middleware(['auth'])->name('task-form');
+
+Route::get('/task-reports', function () {
+    return Inertia::render('ManagerApprovalDashboard',[
+        'auth' => [
+            'user' => Auth::user(),
+        ]]);
+})->middleware(['auth'])->name('task-reports');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

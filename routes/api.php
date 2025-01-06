@@ -27,6 +27,11 @@ Route::get('/department', [DepartmentController::class, 'index']);
 
 Route::post('/task-submission', [TaskReportController::class, 'store']);
 
+Route::get('/task-reports', [TaskReportController::class, 'getTaskReportsWithReferences']);
+
+Route::put('/task-report/{id}', [TaskReportController::class, 'update']);
+
+
 // Route::middleware('auth:sanctum')->get('/roles', [RoleController::class, 'index']);
 
 

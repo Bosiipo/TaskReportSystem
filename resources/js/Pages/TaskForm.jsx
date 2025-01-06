@@ -35,7 +35,7 @@ const TaskForm = ({ auth }) => {
             date: Yup.date()
                 .required('Date is required')
                 .max(new Date(), 'Date cannot be in the future'),
-            department_id: Yup.string().required('dnvjndjvknkj'),
+            department_id: Yup.number().required('dnvjndjvknkj'),
             // .oneOf(departmentIds, 'Invalid department_id selected'),
             task_details: Yup.string()
                 .required('Task details are required')
@@ -46,6 +46,7 @@ const TaskForm = ({ auth }) => {
                 .max(24, 'Hours worked cannot exceed 24'),
         }),
         onSubmit: async (values) => {
+            values = { ...values, department_id: Number(values.department_id) };
             console.log('Form submitted with values:', values);
             try {
                 await axiosInstance.post(`/api/task-submission`, values);
@@ -108,6 +109,7 @@ const TaskForm = ({ auth }) => {
                         Department:
                     </label>
                     <select
+                        type="number"
                         id="department_id"
                         name="department_id"
                         onChange={formik.handleChange}

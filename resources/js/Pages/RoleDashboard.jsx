@@ -25,7 +25,7 @@ export default function RoleDashboard({ auth }) {
         console.log({ roleId });
         setSelectedRoles((prev) => ({
             ...prev,
-            [userId]: roleId,
+        [userId]: roleId,
         }));
     };
 

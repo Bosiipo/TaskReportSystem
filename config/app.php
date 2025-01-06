@@ -123,4 +123,13 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // 'providers' => [
+        // Spatie\Permission\PermissionServiceProvider::class,
+        // Illuminate\Cache\CacheServiceProvider::class,
+    // ],
+
+    // 'aliases' => [
+    //     // Other aliases...
+    //     'File' => Illuminate\Support\Facades\File::class,
+    // ],
 ];

@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_report', function (Blueprint $table) {
+        Schema::create('task_reports', function (Blueprint $table) {
             $table->string('email'); 
-            $table->string('role')->default('Employee'); // Add role column
+            $table->string('role'); // Add role column
             $table->date('date')->nullable(); // Task date
             $table->text('task_details')->nullable(); // Task details
             $table->integer('hours_worked')->default(0); // Hours worked
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null'); // Foreign key for department
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // Foreign key for department
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null'); // Foreign key for department
+            $table->enum('status', ['submitted', 'reviewed']);
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // Foreign key for user
+            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null'); // Foreign key for role
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_report');
+        Schema::dropIfExists('task_reports');
     }
 };
