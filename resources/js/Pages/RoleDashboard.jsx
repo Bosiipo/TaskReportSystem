@@ -152,6 +152,7 @@ export default function RoleDashboard({ auth }) {
             </table>
             <div className="paginator mt-3 px-4 py-12">
                 {users?.links?.map((link) => (
+                    // console.log({url: link.url})
                     <Link
                         href={link.url}
                         dangerouslySetInnerHTML={{ __html: link.label }}

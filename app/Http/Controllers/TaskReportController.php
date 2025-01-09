@@ -212,7 +212,7 @@ class TaskReportController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
 
         // $user = Auth::user();
@@ -242,7 +242,8 @@ class TaskReportController extends Controller
             $taskReport = TaskReport::create($validatedData);
             Log::info('TaskReport Created:', $taskReport->toArray());
             // Redirect with a success message
-            return redirect('/task-form')->back()->with('success', 'Task report created successfully.');
+            // return redirect('/task-form')->with('success', 'Task report created successfully.');
+            return response(null, 200);
         } catch (\Exception $e) {
             Log::error('Error Creating TaskReport:', ['message' => $e->getMessage()]);
             // Handle any errors during the creation process

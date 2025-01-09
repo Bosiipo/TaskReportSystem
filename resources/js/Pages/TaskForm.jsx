@@ -48,13 +48,14 @@ const TaskForm = ({ auth }) => {
         }),
         onSubmit: async (values) => {
             values = { ...values, department_id: Number(values.department_id) };
-            console.log('Form submitted with values:', values);
             try {
                 await axiosInstance.post(`/api/task-submission`, values);
                 alert('Data successfully submitted');
+                formik.resetForm();
                 // await axiosInstance.get(`/task-form`).then((response) => {
                 //     console.log({ response });
                 // });
+                console.log('Form submitted with values:', values);
             } catch (error) {
                 console.error('Submission error:', error.message);
             }

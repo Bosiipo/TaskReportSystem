@@ -185,9 +185,9 @@ export default function AuthenticatedLayout({ header, children }) {
                     </Link>
                     <Link
                         className="my-3 rounded bg-green-800 p-3 text-center"
-                        href="/assign-roles"
+                        href="/task-reports"
                     >
-                        Views
+                        Task Reports
                     </Link>
                     <Link
                         className="my-3 rounded bg-green-800 p-3 text-center"
