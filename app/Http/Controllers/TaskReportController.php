@@ -27,6 +27,49 @@ class TaskReportController extends Controller
     }
 
     /**
+     * Display a listing of tasks submitted for the day with filtering and pagination.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function tasksSubmittedToday(Request $request): JsonResponse
+    {
+        // Retrieve query parameters for filtering
+        $department = $request->query('department');
+        $employeeName = $request->query('employee_name');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $perPage = $request->query('per_page', 10); // Default items per page is 10
+
+        // Build the query
+        $query = TaskReport::query();
+
+        // Apply filters if provided
+        if ($department) {
+            $query->where('department', $department);
+        }
+
+        if ($employeeName) {
+            $query->where('employee_name', 'LIKE', '%' . $employeeName . '%');
+        }
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('date', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->where('date', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->where('date', '<=', $endDate);
+        }
+
+        // Paginate the results
+        $taskReports = $query->paginate($perPage);
+
+        // Return a JSON response
+        return response()->json($taskReports);
+    }
+
+
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
@@ -199,11 +242,11 @@ class TaskReportController extends Controller
             $taskReport = TaskReport::create($validatedData);
             Log::info('TaskReport Created:', $taskReport->toArray());
             // Redirect with a success message
-            return redirect()->back()->with('success', 'Task report created successfully.');
+            return redirect('/task-form')->back()->with('success', 'Task report created successfully.');
         } catch (\Exception $e) {
             Log::error('Error Creating TaskReport:', ['message' => $e->getMessage()]);
             // Handle any errors during the creation process
-            return redirect()->back()->with('error', 'An error occurred while creating the task report: ' . $e->getMessage());
+            return redirect('/task-form')->back()->with('error', 'An error occurred while creating the task report: ' . $e->getMessage());
         }
     }
 

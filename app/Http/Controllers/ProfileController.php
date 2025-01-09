@@ -105,23 +105,48 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function getUsersWithRoles()
-    {
-        // Fetch users with their role (eager loading)
-        $users = User::with('role')->get();
+    // public function getUsersWithRoles()
+    // {
+    //     // Fetch users with their role (eager loading)
+    //     $users = User::with('role')->get();
 
-        // Loop through the users and add the role name to the result
-        $usersWithRoles = $users->map(function ($user) {
+    //     // Loop through the users and add the role name to the result
+    //     $usersWithRoles = $users->map(function ($user) {
+    //         return [
+    //             'id' => $user->id,
+    //             'name' => $user->name,
+    //             'email' => $user->email,
+    //             'role_id' => $user->role_id,
+    //             // 'role_name' => $user->role->name,  // Accessing the role's name
+    //             'role_name' => $user->role ? $user->role->name : null,
+    //         ];
+    //     });
+
+    //     return response()->json($usersWithRoles);
+    // }
+    public function getUsersWithRoles(Request $request)
+    {
+        // Fetch paginated users with their role (eager loading)
+        $perPage = $request->get('per_page', 5); // Default to 10 items per page if not specified
+        $page = $request->get('page', 1); // Default to 1 page if not specified
+        $users = User::with('role')->paginate($perPage);
+
+        // Transform the paginated data to include role names
+        $usersWithRoles = collect($users->items())->map(function ($user) {
             return [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'role_id' => $user->role_id,
-                // 'role_name' => $user->role->name,  // Accessing the role's name
                 'role_name' => $user->role ? $user->role->name : null,
             ];
         });
 
-        return response()->json($usersWithRoles);
+         // Replace the original data with the transformed data
+        $paginatedData = $users->toArray();
+        $paginatedData['data'] = $usersWithRoles;
+
+
+        return response()->json($paginatedData);
     }
 }

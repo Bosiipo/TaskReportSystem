@@ -1,3 +1,4 @@
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -50,9 +51,12 @@ const TaskForm = ({ auth }) => {
             console.log('Form submitted with values:', values);
             try {
                 await axiosInstance.post(`/api/task-submission`, values);
-                console.log('Data successfully submitted');
+                alert('Data successfully submitted');
+                // await axiosInstance.get(`/task-form`).then((response) => {
+                //     console.log({ response });
+                // });
             } catch (error) {
-                console.error('Submission error:', error);
+                console.error('Submission error:', error.message);
             }
         },
     });
@@ -70,10 +74,15 @@ const TaskForm = ({ auth }) => {
     // };
 
     return (
-        <>
-            <h1 className="py-6 text-center text-4xl font-semibold">
-                Task Form
-            </h1>
+        <AuthenticatedLayout
+            header={
+                <div className="flex justify-between">
+                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                        Task Form
+                    </h2>
+                </div>
+            }
+        >
             <form
                 onSubmit={formik.handleSubmit}
                 className="mx-auto mt-8 max-w-md rounded bg-white p-6 shadow-md"
@@ -171,7 +180,8 @@ const TaskForm = ({ auth }) => {
                         value={formik.values.hours_worked}
                         className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                     />
-                    {formik.touched.hours_worked && formik.errors.hours_worked ? (
+                    {formik.touched.hours_worked &&
+                    formik.errors.hours_worked ? (
                         <div className="text-xs italic text-red-500">
                             {formik.errors.hours_worked}
                         </div>
@@ -187,7 +197,7 @@ const TaskForm = ({ auth }) => {
                     </button>
                 </div>
             </form>
-        </>
+        </AuthenticatedLayout>
     );
 };
 

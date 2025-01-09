@@ -31,6 +31,9 @@ Route::get('/task-reports', [TaskReportController::class, 'getTaskReportsWithRef
 
 Route::put('/task-report/{id}', [TaskReportController::class, 'update']);
 
+Route::get('/dashboard-reports', [TaskReportController::class, 'tasksSubmittedToday']);
+
+
 
 // Route::middleware('auth:sanctum')->get('/roles', [RoleController::class, 'index']);
 

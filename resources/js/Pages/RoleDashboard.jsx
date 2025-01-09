@@ -1,6 +1,8 @@
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Inertia } from '@inertiajs/inertia';
 import { useEffect, useState } from 'react';
 import axiosInstance from '../Pages/Auth/axiosConfig';
+import { Link } from '@inertiajs/react';
 
 export default function RoleDashboard({ auth }) {
     console.log({ auth });
@@ -25,20 +27,26 @@ export default function RoleDashboard({ auth }) {
         console.log({ roleId });
         setSelectedRoles((prev) => ({
             ...prev,
-        [userId]: roleId,
+            [userId]: roleId,
         }));
     };
 
-    const fetchUsersAndRoles = async () => {
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            fetchRoles(page);
+        }
+    };
+
+    const fetchUsersAndRoles = async (page = 1, perPage = 5) => {
         try {
             const usersResponse = await axiosInstance.get(
-                '/api/users-with-roles',
+                `/api/users-with-roles?page=${page}&per_page=${perPage}`,
             );
             await axiosInstance
                 .get('/api/roles')
                 .then((response) => {
                     console.log('roles ==>', response.data);
-                    setRoles(response.data);
+                    setRoles(response.data.data);
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -65,9 +73,16 @@ export default function RoleDashboard({ auth }) {
     };
 
     return (
-        <div className="admin-users px-10">
-            <h1 className="py-6 text-center text-4xl font-semibold">Manage Users</h1>
-            <table className="table w-full caption-bottom border-collapse text-nowrap border-[#D7E8F4] align-middle text-sm/5">
+        <AuthenticatedLayout
+            header={
+                <div className="flex justify-between">
+                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                        Manage Users
+                    </h2>
+                </div>
+            }
+        >
+            <table className="tabloid table w-full caption-bottom border-collapse text-nowrap border-[#D7E8F4] align-middle text-sm/5">
                 <thead className="align-bottom">
                     <tr>
                         <th className="p-3 py-4 first:pl-0 [&:not(:first-child)]:hidden">
@@ -85,7 +100,7 @@ export default function RoleDashboard({ auth }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
+                    {users?.data?.map((user) => (
                         <tr key={user.id}>
                             <td className="text-center first:pb-3 first:pl-0 first:pt-2 first:md:py-2">
                                 {user.name}
@@ -135,6 +150,33 @@ export default function RoleDashboard({ auth }) {
                     ))}
                 </tbody>
             </table>
-        </div>
+            <div className="paginator mt-3 px-4 py-12">
+                {users?.links?.map((link) => (
+                    <Link
+                        href={link.url}
+                        dangerouslySetInnerHTML={{ __html: link.label }}
+                        key={link.label}
+                        className={`mx-1 p-1 ${link.active ? 'font-bold text-blue-500' : ''}`}
+                    />
+                ))}
+            </div>
+        </AuthenticatedLayout>
     );
 }
+
+// link.url ? (
+//     <Link
+//         key={link.label}
+//         href={link.url}
+        // className={`mx-1 p-1 ${link.active ? 'font-bold text-blue-500' : ''}`}
+        // dangerouslySetInnerHTML={{ __html: link.label }}
+//     />
+// ) : (
+//     <span
+//         key={link.label}
+//         className="mx-1 p-1 text-slate-300"
+//         dangerouslySetInnerHTML={{ __html: link.label }}
+//     ></span>
+// ),
+// )
+// }

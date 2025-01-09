@@ -27,7 +27,7 @@ class RoleController extends Controller
      */
     public function index(): JsonResponse
     {
-        $roles = Role::all();
+        $roles = Role::paginate(5);
         // return view('admin.roles.index', compact('roles'));
         // dd($roles);
         // Log::info("message");::info('Roles API accessed.');

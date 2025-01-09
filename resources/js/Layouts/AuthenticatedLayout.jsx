@@ -8,13 +8,13 @@ import { useState } from 'react';
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
 
-    console.log({ userFrom: user });
+    // console.log({ userFrom: user });
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="outro min-h-screen border-solid bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
@@ -24,7 +24,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
-
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
                                     href={route('dashboard')}
@@ -164,15 +163,61 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
-            )}
+            <div className="first">
+                <div className="side-bar">
+                    <Link
+                        className="my-3 rounded bg-green-800 p-3 text-center"
+                        href="/dashboard"
+                    >
+                        Dashboard
+                    </Link>
+                    <Link
+                        className="my-3 rounded bg-green-800 p-3 text-center"
+                        href="/assign-roles"
+                    >
+                        Assign Roles
+                    </Link>
+                    <Link
+                        className="my-3 rounded bg-green-800 p-3 text-center"
+                        href="/task-form"
+                    >
+                        Record Task Report
+                    </Link>
+                    <Link
+                        className="my-3 rounded bg-green-800 p-3 text-center"
+                        href="/assign-roles"
+                    >
+                        Views
+                    </Link>
+                    <Link
+                        className="my-3 rounded bg-green-800 p-3 text-center"
+                        href="/assign-roles"
+                    >
+                        Stuff
+                    </Link>
+                </div>
+                <div className="content">
+                    {/* CONTENT */}
+                    {header && (
+                        <header className="bg-white shadow">
+                            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                                {header}
+                            </div>
+                        </header>
+                    )}
 
-            <main>{children}</main>
+                    <main>{children}</main>
+                </div>
+                {/* {header && (
+                    <header className="bg-white shadow">
+                        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                            {header}
+                        </div>
+                    </header>
+                )}
+
+                <main>{children}</main> */}
+            </div>
         </div>
     );
 }

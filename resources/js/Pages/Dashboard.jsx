@@ -32,30 +32,43 @@ export default function Dashboard({ auth }) {
                     console.error('Error:', error);
                 });
         };
+
+        const dashboardReports = () => {
+            axiosInstance
+                .get(`/api/dashboard-reports`)
+                .then((response) => {
+                    console.log('DASHBOARD_REPORTS ==>', response.data);
+                    // setRoleName(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        };
+        dashboardReports();
         if (user.role_id) {
             // Only fetch if role_id exists
             getRole();
         }
     }, [user]);
 
-    const handleClick = () => {
-        axiosInstance
-            .get('/assign-roles')
-            .then((response) => {
-                console.log('ASSIGN_ROLES');
-                console.log('response ==>', response.data);
-                console.log('role assigned', response.data);
-            })
-            .catch((error) => {
-                if (error.response && error.response.status === 403) {
-                    alert(
-                        'You do not have permission to access this resource.',
-                    );
-                } else {
-                    console.error('An error occurred:', error);
-                }
-            });
-    };
+    // const handleClick = () => {
+    //     axiosInstance
+    //         .get('/assign-roles')
+    //         .then((response) => {
+    //             console.log('ASSIGN_ROLES');
+    //             console.log('response ==>', response.data);
+    //             console.log('role assigned', response.data);
+    //         })
+    //         .catch((error) => {
+    //             if (error.response && error.response.status === 403) {
+    //                 alert(
+    //                     'You do not have permission to access this resource.',
+    //                 );
+    //             } else {
+    //                 console.error('An error occurred:', error);
+    //             }
+    //         });
+    // };
 
     const handleClickOnTaskCreation = () => {
         axiosInstance
@@ -76,27 +89,12 @@ export default function Dashboard({ auth }) {
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         Dashboard
                     </h2>
-                    {/* {roleName === 'Admin' ? ( */}
-                    <Link
-                        className="rounded bg-green-800 p-1 px-3"
-                        href="/assign-roles"
-                    >
-                        Assign Roles
-                    </Link>
-                    {/* ) : ( */}
-                    <Link
-                        className="rounded bg-green-800 p-1 px-3"
-                        href="/task-form"
-                    >
-                        Record Task Report
-                    </Link>
-                    {/* )} */}
                 </div>
             }
         >
-            <Head title="Dashboard" />
+            {/* <Head title="Dashboard" /> */}
 
-            <div className="py-12">
+            <div className="intro py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
