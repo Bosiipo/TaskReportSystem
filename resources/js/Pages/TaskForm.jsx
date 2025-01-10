@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import axiosInstance from './Auth/axiosConfig';
 
-const TaskForm = ({ auth }) => {
-    console.log({ auth });
+const TaskForm = () => {
     const [departments, setDepartments] = useState([]);
 
     useEffect(() => {
@@ -13,7 +12,6 @@ const TaskForm = ({ auth }) => {
             axiosInstance
                 .get('/api/department')
                 .then((response) => {
-                    console.log('department_id ==>', response.data);
                     setDepartments(response.data);
                 })
                 .catch((error) => {
@@ -23,7 +21,7 @@ const TaskForm = ({ auth }) => {
         getDepartments();
     }, []);
 
-    const departmentIds = departments?.map((dept) => dept.id);
+    // const departmentIds = departments?.map((dept) => dept.id);
 
     const formik = useFormik({
         initialValues: {
@@ -73,6 +71,10 @@ const TaskForm = ({ auth }) => {
     //         console.error('Error updating role:', error);
     //     }
     // };
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        formik.handleSubmit();
+    };
 
     return (
         <AuthenticatedLayout
@@ -85,7 +87,7 @@ const TaskForm = ({ auth }) => {
             }
         >
             <form
-                onSubmit={formik.handleSubmit}
+                onSubmit={onSubmit}
                 className="mx-auto mt-8 max-w-md rounded bg-white p-6 shadow-md"
             >
                 <div className="mb-4">
@@ -99,6 +101,7 @@ const TaskForm = ({ auth }) => {
                         type="date"
                         id="date"
                         name="date"
+                        max={new Date().toISOString().split('T')[0]}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.date}

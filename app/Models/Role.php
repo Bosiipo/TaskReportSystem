@@ -11,6 +11,10 @@ class Role extends Model
 
     protected $fillable = ['name'];
 
+    public static $ADMIN = 1;
+    public static $MANAGER = 2;
+    public static $EMPLOYEE = 3;
+
     /**
      * Define a relationship with the User model.
      */

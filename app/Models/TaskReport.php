@@ -14,7 +14,7 @@ class TaskReport extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'task_reports'; 
+    protected $table = 'task_reports';
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +28,7 @@ class TaskReport extends Authenticatable
         'task_details',
         'hours_worked',
         'department_id',
+        'role',
         'role_id',
         'status',
         'user_id',

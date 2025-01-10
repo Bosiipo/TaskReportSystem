@@ -8,8 +8,8 @@ class UpdateUsersTableAddRolesTasks extends Migration
 {
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->string('role')->default('Employee'); // Add role column
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('role_id')->nullable()->onDelete('set null');
             $table->date('date')->nullable(); // Task date
             $table->text('task_details')->nullable(); // Task details
             $table->integer('hours_worked')->default(0); // Hours worked
@@ -20,8 +20,8 @@ class UpdateUsersTableAddRolesTasks extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'date', 'task_details', 'hours_worked']);
-            $table->dropForeign(['department_id']);
+            $table->dropColumn(['date', 'task_details', 'hours_worked']);
+            $table->dropForeign(['department_id', 'role_id']);
         });
     }
 }

@@ -38,13 +38,11 @@ class RoleMiddleware
         $destructured_role = Arr::first($role);
 
         Log::info('Role Middleware Check', [
-            // 'user' => Auth::user(),
-            // 'required_role' => $role,
             'first item' => $destructured_role,
             'auth user role' =>  auth()->user()->role->name,
             'roleMatch' => $destructured_role === auth()->user()->role->name
         ]);
-        
+
         if (auth()->check() && auth()->user()->role->name === $destructured_role) {
             return $next($request);
         }

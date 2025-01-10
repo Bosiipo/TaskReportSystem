@@ -31,6 +31,8 @@ Route::get('/task-reports', [TaskReportController::class, 'getTaskReportsWithRef
 
 Route::put('/task-report/{id}', [TaskReportController::class, 'update']);
 
+Route::put('/task-report/{id}/remark', [TaskReportController::class, 'addRemarks']);
+
 Route::get('/dashboard-reports', [TaskReportController::class, 'tasksSubmittedToday']);
 
 

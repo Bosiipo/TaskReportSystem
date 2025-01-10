@@ -1,23 +1,22 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
-import Select from '@/Components/Select';
+// import Select from '@/Components/Select';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
-        role_id: '1',
     });
-    const [roles, setRoles] = useState([]);
+    // const [roles, setRoles] = useState([]);
 
     useEffect(() => {
         axios

@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\TaskReport;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+
 // use App\Enums\Status;
 // use App\Enums\Status;
 
@@ -72,7 +77,7 @@ class TaskReportController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): Response
+    public function edit(Request $request): InertiaResponse
     {
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
@@ -138,12 +143,60 @@ class TaskReportController extends Controller
     //     ]);
     // }
 
+    public function addRemarks(Request $request, $id) {
+        $taskReport = TaskReport::find($id);
+
+        if (!$taskReport) {
+            return response()->json(['error' => 'Task report not found.'], 404);
+        }
+
+        $user = Auth::user();
+
+        if ($user->role_id !== Role::$MANAGER) {
+            return response()->json(['error' => 'You are not authorized to add remarks to this task report.'], 403);
+        }
+
+        $request->validate([
+            'manager_comments' => 'required|string|min:10|max:1000',
+        ]);
+
+        try {
+            $taskReport->manager_comments = $request->manager_comments;
+            $taskReport->manager_id = $user->id;
+            $taskReport->status = 'reviewed'; // TODO: ensure this is dynamic as it can be reject or approved
+            $taskReport->save();
+
+            return response()->json(['message' => 'Remarks added successfully.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to add remarks.', 'details' => $e->getMessage()], 500);
+        }
+    }
+
         /**
      * Update the specified user's information.
      */
     public function update(Request $request, $id)
     {
         $taskReport = TaskReport::where('id', $id);
+
+        $user = Auth::user();
+
+        if (!$taskReport) {
+            return response()->json(['error' => 'Task report not found.'], 404);
+        }
+
+        if ($taskReport->user_id !== $user->id) {
+            return response()->json(['error' => 'You are not authorized to update this task report.'], 403);
+        }
+
+        $taskReportDate = $taskReport->created_at;
+        $currentDate = now();
+        $diffInHours = $currentDate->diffInHours($taskReportDate);
+
+        if ($diffInHours > 24) {
+            return response()->json(['error' => 'Task report is more than 24 hours old.'], 400);
+        }
+
         // Define validation rules
         $validationRules = [
             'date' => 'sometimes|date', // Task date, optional but validated if present
@@ -151,31 +204,31 @@ class TaskReportController extends Controller
             'hours_worked' => 'sometimes|numeric|min:0', // Hours worked, optional
             'task_details' => 'sometimes|string|min:10|max:1000', // Task details, optional
         ];
-    
+
         // Validate request data
         $validatedData = $request->validate($validationRules);
-    
+
         try {
 
             if ($taskReport->isDirty('date')) {
-                $taskReport->date = $validatedData['date']; 
+                $taskReport->date = $validatedData['date'];
             }
 
             if ($taskReport->isDirty('department_id')) {
-                $taskReport->department_id = $validatedData['department_id']; 
+                $taskReport->department_id = $validatedData['department_id'];
             }
 
             if ($taskReport->isDirty('hours_worked')) {
-                $taskReport->date = $validatedData['hours_worked']; 
+                $taskReport->date = $validatedData['hours_worked'];
             }
 
             if ($taskReport->isDirty('task_details')) {
-                $taskReport->task_details = $validatedData['task_details']; 
+                $taskReport->task_details = $validatedData['task_details'];
             }
 
             $taskReport->save();
 
-    
+
             // Return success response
             return response()->json(['message' => 'Task report updated successfully.'], 200);
         } catch (\Exception $e) {
@@ -183,7 +236,7 @@ class TaskReportController extends Controller
             return response()->json(['error' => 'Failed to update task report.', 'details' => $e->getMessage()], 500);
         }
     }
-    
+
 
     /**
      * Delete the user's account.
@@ -215,8 +268,8 @@ class TaskReportController extends Controller
     public function store(Request $request)
     {
 
-        // $user = Auth::user();
         $user = Auth::user();
+
         $role = Role::find($user->role_id);
         // Validate the incoming request data
         $validatedData = $request->validate([
@@ -231,7 +284,8 @@ class TaskReportController extends Controller
         // Add the authenticated user's ID to the validated data
         $validatedData['user_id'] = $user->id;
         $validatedData['employee_name'] = $user->name;
-        $validatedData['role'] = $role->role_name;
+        //TODO: Create a migration to remove the role and role_id columns from the task reports table
+        $validatedData['role'] = $role->name;
         $validatedData['email'] = $user->email;
         $validatedData['status'] = 'submitted';
         $validatedData['role_id'] = $user->role_id;
@@ -241,13 +295,11 @@ class TaskReportController extends Controller
             Log::info('Creating TaskReport');
             $taskReport = TaskReport::create($validatedData);
             Log::info('TaskReport Created:', $taskReport->toArray());
-            // Redirect with a success message
-            // return redirect('/task-form')->with('success', 'Task report created successfully.');
             return response(null, 200);
         } catch (\Exception $e) {
             Log::error('Error Creating TaskReport:', ['message' => $e->getMessage()]);
             // Handle any errors during the creation process
-            return redirect('/task-form')->back()->with('error', 'An error occurred while creating the task report: ' . $e->getMessage());
+            return redirect('/task-form')->with('error', 'An error occurred while creating the task report: ' . $e->getMessage());
         }
     }
 
@@ -280,7 +332,7 @@ class TaskReportController extends Controller
             ];
         });
 
-        
+
 
         return response()->json($taskReportsExtra);
     }
